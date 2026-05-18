@@ -386,10 +386,8 @@ void exercise6() {
   // Escala pulsante
   float s = 1.0f + 0.35f * sinf(timer * 0.7f);
   float S[16] = {
-      s,    0.0f, 0.0f, 0.0f,
-      0.0f, s,    0.0f, 0.0f,
-      0.0f, 0.0f, s,    0.0f,
-      0.0f, 0.0f, 0.0f, 1.0f,
+      s,    0.0f, 0.0f, 0.0f, 0.0f, s,    0.0f, 0.0f,
+      0.0f, 0.0f, s,    0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
   };
 
   // M = T * Ry * S
