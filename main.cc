@@ -551,6 +551,18 @@ void exercise9() {
   glPopMatrix();
 }
 
+static int currentExercise = 9;
+
+static void key_callback(GLFWwindow *win, int key, int scancode, int action, int mods) {
+  if (action != GLFW_PRESS) return;
+  if (key >= GLFW_KEY_1 && key <= GLFW_KEY_9) {
+    currentExercise = key - GLFW_KEY_0;
+    printf("Ejercicio %d\n", currentExercise);
+  }
+  if (key == GLFW_KEY_ESCAPE)
+    glfwSetWindowShouldClose(win, GLFW_TRUE);
+}
+
 int main(int argc, char **argv) {
   if (!glfwInit()) {
     return -1;
@@ -565,6 +577,7 @@ int main(int argc, char **argv) {
   }
 
   glfwMakeContextCurrent(window);
+  glfwSetKeyCallback(window, key_callback);
 
   while (!glfwWindowShouldClose(window)) {
     int width, height;
@@ -589,15 +602,17 @@ int main(int argc, char **argv) {
     glTranslatef(0.0f, 0.0f, -10.0f); // Centrar la figura
     // Vista frontal 2D (sin rotaciones en X)
 
-    // exercise1();
-    // exercise2();
-    // exercise3();
-    // exercise4();
-    // exercise5();
-    // exercise6();
-    // exercise7();
-    // exercise8();
-    // exercise9();
+    switch (currentExercise) {
+      case 1: exercise1();   break;
+      case 2: exercise2();   break;
+      case 3: exercise3();   break;
+      case 4: exercise4();   break;
+      case 5: exercise5();   break;
+      case 6: exercise6();   break;
+      case 7: exercise7();   break;
+      case 8: exercise8();   break;
+      case 9: exercise9();   break;
+    }
 
     glfwSwapBuffers(window);
     glfwPollEvents();
