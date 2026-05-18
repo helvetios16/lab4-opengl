@@ -364,34 +364,38 @@ static void mat4_rotAxis(float M[16], float ax, float ay, float az,
 }
 
 void exercise6() {
+  static float x = -10.0f;
+  static int dir = 1;
+  static float selfAngle = 0.0f;
   static float timer = 0.0f;
+
+  x += 0.06f * dir;
+  if (x > 10.0f || x < -10.0f)
+    dir *= -1;
+  selfAngle += 0.05f;
   timer += 0.02f;
 
-  float theta = timer;
-  float R[16] = {
-      cosf(theta), 0.0f, -sinf(theta), 0.0f, // columna 0
-      0.0f,        1.0f, 0.0f,         0.0f, // columna 1
-      sinf(theta), 0.0f, cosf(theta),  0.0f, // columna 2
-      0.0f,        0.0f, 0.0f,         1.0f, // columna 3
-  };
+  // Traslacion horizontal sobre y=0
+  float T[16];
+  mat4_translation(T, x, 0.0f, 0.0f);
 
-  float Tx = 4.0f * sinf(timer * 0.35f);
-  float Ty = 2.0f * cosf(timer * 0.5f);
-  float T[16] = {
-      1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-      0.0f, 0.0f, 1.0f, 0.0f, Tx,   Ty,   0.0f, 1.0f,
-  };
+  // Rotacion sobre el propio eje Y
+  float Ry[16];
+  mat4_rotAxis(Ry, 0.0f, 1.0f, 0.0f, selfAngle);
 
+  // Escala pulsante
   float s = 1.0f + 0.35f * sinf(timer * 0.7f);
   float S[16] = {
-      s,    0.0f, 0.0f, 0.0f, 0.0f, s,    0.0f, 0.0f,
-      0.0f, 0.0f, s,    0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+      s,    0.0f, 0.0f, 0.0f,
+      0.0f, s,    0.0f, 0.0f,
+      0.0f, 0.0f, s,    0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f,
   };
 
-  // Combinar: M = T * R * S  (se aplica: primero S, luego R, luego T)
-  float TR[16], TRS[16];
-  mat4_mul(TR, T, R);
-  mat4_mul(TRS, TR, S);
+  // M = T * Ry * S
+  float TRy[16], TRS[16];
+  mat4_mul(TRy, T, Ry);
+  mat4_mul(TRS, TRy, S);
 
   glPushMatrix();
   glMultMatrixf(TRS);
@@ -553,8 +557,10 @@ void exercise9() {
 
 static int currentExercise = 9;
 
-static void key_callback(GLFWwindow *win, int key, int scancode, int action, int mods) {
-  if (action != GLFW_PRESS) return;
+static void key_callback(GLFWwindow *win, int key, int scancode, int action,
+                         int mods) {
+  if (action != GLFW_PRESS)
+    return;
   if (key >= GLFW_KEY_1 && key <= GLFW_KEY_9) {
     currentExercise = key - GLFW_KEY_0;
     printf("Ejercicio %d\n", currentExercise);
@@ -603,15 +609,33 @@ int main(int argc, char **argv) {
     // Vista frontal 2D (sin rotaciones en X)
 
     switch (currentExercise) {
-      case 1: exercise1();   break;
-      case 2: exercise2();   break;
-      case 3: exercise3();   break;
-      case 4: exercise4();   break;
-      case 5: exercise5();   break;
-      case 6: exercise6();   break;
-      case 7: exercise7();   break;
-      case 8: exercise8();   break;
-      case 9: exercise9();   break;
+    case 1:
+      exercise1();
+      break;
+    case 2:
+      exercise2();
+      break;
+    case 3:
+      exercise3();
+      break;
+    case 4:
+      exercise4();
+      break;
+    case 5:
+      exercise5();
+      break;
+    case 6:
+      exercise6();
+      break;
+    case 7:
+      exercise7();
+      break;
+    case 8:
+      exercise8();
+      break;
+    case 9:
+      exercise9();
+      break;
     }
 
     glfwSwapBuffers(window);
